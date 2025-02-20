@@ -4,10 +4,11 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { ChevronLeftIcon, ScrollTextIcon } from "lucide-react";
 import RestaurantHeader from "./components/header";
+import RestaurantCategories from "./components/categories";
 
 interface RestaurantMenuPageProps {
-  params: Promise<{ slug: string }>;
-  searchParams: Promise<{ consumptionMethod: string }>;
+  params: { slug: string };
+  searchParams: { consumptionMethod: string };
 }
 
 const isConsumptionMethodValid = (consumptionMethod: string) => {
@@ -18,18 +19,30 @@ const RestaurantMenuPage = async ({
   params,
   searchParams,
 }: RestaurantMenuPageProps) => {
-  const { slug } = await params;
-  const { consumptionMethod } = await searchParams;
+  const { slug } = params;
+  const { consumptionMethod } = searchParams;
+  
   if (!isConsumptionMethodValid(consumptionMethod)) {
     return notFound();
   }
-  const restaurant = await db.restaurant.findFirst({ where: { slug } });
+  
+  const restaurant = await db.restaurant.findFirst({ 
+    where: { slug }, 
+    include: {
+      menuCategories: {
+        include: { products: true},
+      }
+    },
+  });
+  console.log({ restaurant })
   if (!restaurant) {
     return notFound();
   }
+  
   return (
     <div>
-     <RestaurantHeader restaurant={restaurant}/>
+      <RestaurantHeader restaurant={restaurant} />
+      <RestaurantCategories restaurant={restaurant} />
     </div>
   );
 };
