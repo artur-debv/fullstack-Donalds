@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { formatCurrency } from "@/helpers/format-currency";
-import { Prisma, Restaurant } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { ChefHatIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import Image from "next/image";
 import { useContext, useState } from "react";
@@ -24,8 +24,11 @@ interface ProductDetailsProps {
 }
 
 const ProductDetails = ({ product }: ProductDetailsProps) => {
-  const { toggleCart } = useContext(CartContext);
+  console.log("Detalhes do Produto:", product); // Verifique os dados aqui
+
+  const { toggleCart, addProduct } = useContext(CartContext);
   const [quantity, setQuantity] = useState<number>(1);
+
   const handleDescreaseQuantity = () => {
     setQuantity((prev) => {
       if (prev === 1) {
@@ -37,9 +40,15 @@ const ProductDetails = ({ product }: ProductDetailsProps) => {
   const handleCreaseQuantity = () => {
     setQuantity((prev) => prev + 1);
   };
+
   const handleAddToCart = () => {
+    addProduct({
+      ...product,
+      quantity,
+    });
     toggleCart();
   };
+
   return (
     <>
       <div className="relative z-50 mt-[-1.5rem] flex flex-auto flex-col overflow-hidden rounded-tl-3xl p-5">
@@ -97,15 +106,12 @@ const ProductDetails = ({ product }: ProductDetailsProps) => {
               </p>
             </div>
 
-            {/* IGREDIENTES */}
+            {/* INGREDIENTES */}
             <div className="mt-6 space-y-3">
               <div className="5 flex items-center gap-1">
                 <ChefHatIcon />
-                <h4 className="font-semibold">Igredientes</h4>
+                <h4 className="font-semibold">Ingredientes</h4>
               </div>
-              <p className="text-sm text-muted-foreground">
-                {product.description}
-              </p>
               <ul className="list-disc px-5 text-sm text-muted-foreground">
                 {product.ingredients.map((ingredient) => (
                   <li key={ingredient}>{ingredient}</li>

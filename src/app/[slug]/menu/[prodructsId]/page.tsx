@@ -21,6 +21,8 @@ const ProductPage = async ({ params }: ProductPageProps) => {
     },
   });
 
+  console.log("Produto:", product); // Verifique os dados retornados aqui
+
   if (!product) {
     return notFound();
   }
