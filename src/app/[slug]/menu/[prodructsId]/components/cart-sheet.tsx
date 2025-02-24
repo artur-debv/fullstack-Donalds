@@ -6,15 +6,17 @@ import {
 } from "@/components/ui/sheet";
 
 import { CartContext } from "../../context/cart";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import CartProductItem from "./cart-product-item";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { format } from "path";
 import { formatCurrency } from "@/helpers/format-currency";
+import FinishOrderDialog from "../../components/finish-order-dialog";
 
 const CartSheet = () => {
+  const [finishOrderDialogIsOpen, setFinishOrderDialogIsOpen] = useState(false); // Corrigido aqui!
   const { isOpen, toggleCart, products, total } = useContext(CartContext);
+  
   return (
     <Sheet open={isOpen} onOpenChange={toggleCart}>
       <SheetContent className="w-[80%]">
@@ -30,12 +32,25 @@ const CartSheet = () => {
           <Card className="mb-6">
             <CardContent className="p-5">
               <div className="flex justify-between">
+                <p className="text-sm text-muted-foreground">Subtotal</p>
+                <p className="text-sm font-semibold">{formatCurrency(total)}</p>
+              </div>
+            </CardContent>
+            <CardContent className="p-5">
+              <div className="flex justify-between">
+                <p className="text-sm text-muted-foreground">Desconto</p>
+                <p className="text-sm font-semibold">0</p>
+              </div>
+            </CardContent>
+            <CardContent className="p-5">
+              <div className="flex justify-between">
                 <p className="text-sm text-muted-foreground">Total</p>
                 <p className="text-sm font-semibold">{formatCurrency(total)}</p>
               </div>
             </CardContent>
           </Card>
-          <Button className="w-full rounded-full">Finalizar pedido</Button>
+          <Button className="w-full rounded-full" onClick={() => setFinishOrderDialogIsOpen(true)}>Finalizar pedido</Button>
+          <FinishOrderDialog open={finishOrderDialogIsOpen} onOpenChange={setFinishOrderDialogIsOpen}/>
         </div>
       </SheetContent>
     </Sheet>
